@@ -1,0 +1,3 @@
+INDEX VERSION 1.131
+C:\Users\llssk\OneDrive\πŸ≈¡ »≠∏È\study_JSP_Login_simple\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2444225454.index
+\Login_practice\src

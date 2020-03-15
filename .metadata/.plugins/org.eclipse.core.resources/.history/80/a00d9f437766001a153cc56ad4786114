@@ -1,0 +1,75 @@
+
+
+import java.io.IOException;
+import java.lang.ProcessBuilder.Redirect;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class login
+ */
+@WebServlet("/login")
+public class login extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private Connection conn;
+	private Statement stat;
+	private ResultSet resultSet;
+
+    /**
+     * Default constructor. 
+     */
+    public login() {
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doAction(request, response);
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doAction(request, response);
+	}
+	
+	protected void doAction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		
+		String id = request.getParameter("id");
+		String pw = request.getParameter("pw");
+		
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDrive");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "scott", "tiger");
+			stat = conn.createStatement();
+			resultSet = stat.executeQuery("select * from member where id = '"+id+"' and pw = '"+pw+"'");
+			
+			while(resultSet.next()) {
+				if(id.equals(resultSet.getString("id")) && pw.equals(resultSet.getString("pw")))
+					response.sendRedirect("main.jsp");
+				else
+					response.sendRedirect("index.html");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+}
