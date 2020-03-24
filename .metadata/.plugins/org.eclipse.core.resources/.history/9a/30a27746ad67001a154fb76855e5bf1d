@@ -1,0 +1,105 @@
+package com.java.loginEx;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+/**
+ * Servlet implementation class edit
+ */
+@WebServlet("/edit")
+public class edit extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+   
+	private HttpSession httpSession;
+	private Connection conn;
+	private Statement stat;
+	
+	private String id;
+	private String pw;
+	private String name;
+	private String phone;
+	
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public edit() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doAction(request, response);
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doAction(request, response);
+	}
+	
+	protected void doAction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		
+		id = request.getParameter("id");
+		pw = request.getParameter("pw");
+		name = request.getParameter("name");
+		phone = request.getParameter("phone");
+		
+		if(CheckPw()) {
+			String query = "update member set name = '"+name+"', phone = '"+phone+"'";
+			
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl","scott","tiger");
+				stat = conn.createStatement();
+				int i = stat.executeUpdate(query);
+				if(i == 1) {
+					System.out.println("update success");
+					response.sendRedirect("edit_success.jsp");
+				}
+				else
+					System.out.println("update fail");
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				try {
+					if(stat != null) stat.close();
+					if(conn != null) conn.close();
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		else
+			response.sendRedirect("edit_fail.jsp");	
+	}
+	private boolean CheckPw() {
+		System.out.println("CheckPw In");
+		boolean result = false;
+		String sessionPw = httpSession.getAttribute("pw").toString();
+		if(pw.equals(sessionPw))
+			result = true;
+		else
+			result = false;
+		System.out.println("CheckPw ³¡");
+		return result;		
+	}
+}

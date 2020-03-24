@@ -1,0 +1,62 @@
+package com.java.loginEx;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
+public class DAO {
+	
+	private DataSource dataSource;
+	
+	public DAO() {
+		try {
+			Context context = new InitialContext();
+			dataSource = (DataSource)context.lookup("java:comp/env/jdbc/Oracle11g");
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public ArrayList<DTO> memberSelect(){
+		
+		ArrayList<DTO> dtos = new ArrayList<DTO>();
+		
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		String query = "select * from member";
+		
+		try {
+			conn = dataSource.getConnection();
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+			
+			while(rs.next()) {
+				String id = rs.getString("id");
+				String pw = rs.getString("pw");
+				String name = rs.getString("name");
+				String phone = rs.getString("phone");
+				
+				DTO dto = new DTO(id,pw,name,phone);
+				dtos.add(dto);				
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs != null)rs.close();
+				if(stmt != null)stmt.close();
+				if(conn != null)conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	  	return dtos;
+	 
+	}
+}

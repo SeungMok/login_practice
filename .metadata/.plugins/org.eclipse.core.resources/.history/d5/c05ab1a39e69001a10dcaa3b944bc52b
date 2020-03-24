@@ -1,0 +1,29 @@
+package com.java.loginEx;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+import javax.activation.DataSource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
+public class DAO {
+	
+	private DataSource dataSource;
+	
+	public int insertMember(DTO dto) {
+		int i = 0;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String query = "insert into member values (?,?,?,?)";
+		
+		try {
+			Context context = new InitialContext();
+			dataSource = (DataSource)context.lookup("java.comp/env/jdbc/Oracle11g");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+}

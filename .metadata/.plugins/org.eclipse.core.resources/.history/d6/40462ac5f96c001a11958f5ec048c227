@@ -1,0 +1,57 @@
+<%@page import="com.java.loginEx.*" %>
+<%@ page language="java" contentType="text/html; charset=EUC-KR"
+    pageEncoding="EUC-KR"%>
+<jsp:useBean id="dto" class="com.java.loginEx.memberDto"/>
+<jsp:setProperty name="dto" property="*"/>
+
+<%!
+	int loginConfirm;
+ %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		memberDao dao = memberDao.getInstance();
+		String id = (String)request.getAttribute("id");
+		String pw = (String)request.getAttribute("pw");
+		
+		loginConfirm = dao.loginConfirm(id, pw);
+		
+		if(loginConfirm == memberDao.MEMBER_JOIN_SUCCESS)
+		{
+			session.setAttribute("id", id);
+			session.setAttribute("pw", pw);
+	%>
+		<script language="javascript">
+			alert("로그인 성공");
+			document.location.href="main.jsp";
+		</script>
+	<%
+		}
+		else if(loginConfirm == memberDao.MEMBER_LOGIN_PW_NO)
+		{
+	%>		
+		<script language="javascript">
+			alert("비밀번호가 틀렸습니다.");
+			document.location.href="login.jsp";
+		</script>
+	<%
+		}
+		else
+		{
+	%>		
+		<script language="javascript">
+			alert("로그인에 실패 하였습니다.");
+			document.location.href="login.jsp";
+		</script>
+	<%
+		}
+	%>
+			
+	
+</body>
+</html>

@@ -1,0 +1,44 @@
+<%@page import="com.java.loginEx.*" %>
+<%@ page language="java" contentType="text/html; charset=EUC-KR"
+    pageEncoding="EUC-KR"%>
+<jsp:useBean id="dto" class="com.java.loginEx.DTO"/>
+<jsp:setProperty name="dto" property="*" />
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		DAO dao = DAO.getInstance();
+		if(dao.join_idConfirm(dto.getId()) == DAO.MEMBER_EXIST){
+	%>
+		<script language="javascript">
+			alert("아이디가 존재합니다.");
+			history.back();
+		</script>
+	<%	
+		}
+		else{
+			int ri = dao.memberInsert(dto);
+			if(ri == DAO.MEMBER_JOIN_SUCCESS){
+				session.setAttribute("id", dto.getId());
+	%>
+		<script language="javascript">
+			alert("회원가입을 축하 합니다.");
+			document.location.href="login.jsp";
+		</script>
+	<%
+			} else {
+	%>
+		<script language="javascript">
+			alert("회원가입에 실패했습니다..");
+			document.location.href="login.jsp";
+		</script>
+	<%
+			}
+		}
+	%>
+</body>
+</html>

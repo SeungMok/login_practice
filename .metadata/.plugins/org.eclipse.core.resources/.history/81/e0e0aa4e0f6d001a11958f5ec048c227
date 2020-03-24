@@ -1,0 +1,22 @@
+<%@ page language="java" contentType="text/html; charset=EUC-KR"
+    pageEncoding="EUC-KR"%>
+    
+<%!
+	String name, id, pw;	
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>Insert title here</title>
+</head>
+<body>
+	<%
+		id = session.getAttribute("id").toString();
+		pw = session.getAttribute("pw").toString();
+		name = session.getAttribute("name").toString();
+		
+	%>
+	님 환영합니다.
+</body>
+</html>

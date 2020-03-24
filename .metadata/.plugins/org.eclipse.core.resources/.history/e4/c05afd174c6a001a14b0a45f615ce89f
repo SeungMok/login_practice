@@ -1,0 +1,37 @@
+/**
+ * 
+ */
+
+function infoConfirm(){
+	if(document.join_frame.id.value.lengh == 0){
+		alert("아이디를 입력하세요.");
+		join_frame.id.focus();
+		return;
+	}
+	
+	if(document.join_frame.pw.value.lengh == 0){
+		alert("비밀번호를 입력하세요.");
+		join_frame.pw.focus();
+		return;
+	}
+	
+	if(document.join_frame.pw.value != document.join_frame.pw_confirm.value){
+		alert("비밀번호가 일치하지 않습니다.");
+		join_frame.pw_confirm.focus();
+		return;
+	}
+	
+	if(document.join_frame.name.value.lengh == 0){
+		alert("이름를 입력하세요.");
+		join_frame.name.focus();
+		return;
+	}
+	
+	if(document.join_frame.phone.value.lengh == 0){
+		alert("전화번호를 입력하세요.");
+		join_frame.phone.focus();
+		return;
+	}
+	
+	document.join_frame.submit();
+}

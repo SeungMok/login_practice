@@ -1,0 +1,145 @@
+package com.java.loginEx;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
+public class DAO {
+	
+	public static final int MEMBER_JOIN_SUCCESS = 1;
+	public static final int MEMBER_JOIN_FAIL = 0;
+	public static final int MEMBER_LOGIN_PW_NO = 0;
+	public static final int MEMBER_LOGIN_SUCCESS = 1;
+	public static final int MEMBER_LOGIN_IS_NOT = 1;
+	public static final int MEMBER_EXIST = 1;
+	public static final int MEMBER_NONEXIST = 0;
+	
+	private static DAO instance = new DAO();
+	
+	public DAO() {}
+	
+	public static DAO getInstance() {
+		return instance;
+	}
+	
+	public ArrayList<DTO> memberSelect(){
+		
+		ArrayList<DTO> dtos = new ArrayList<DTO>();
+		
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		String query = "select * from member";
+		
+		try {
+			conn = getConnection();
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+			
+			while(rs.next()) {
+				String id = rs.getString("id");
+				String pw = rs.getString("pw");
+				String name = rs.getString("name");
+				String phone = rs.getString("phone");
+				
+				DTO dto = new DTO(id,pw,name,phone);
+				dtos.add(dto);				
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs != null)rs.close();
+				if(stmt != null)stmt.close();
+				if(conn != null)conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	  	return dtos;
+	 
+	}
+	
+	public int memberInsert(DTO dto) {
+		int ri = 0;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String query = "insert id,pw,name,phone into member(?,?,?,?)";
+		
+		try {
+			conn = getConnection();
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, dto.getId());
+			pstmt.setString(2, dto.getPw());
+			pstmt.setString(3, dto.getName());
+			pstmt.setString(4, dto.getPhone());
+			pstmt.executeUpdate();			
+			ri = DAO.MEMBER_JOIN_SUCCESS;
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(pstmt != null) pstmt.close();
+				if(conn != null) conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}	
+		return ri;
+	}
+	
+	public int join_idConfirm(String id) {
+		int ri = 0;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String query = "select id from member where id = ?";
+		try {
+			conn = getConnection();
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			if(rs.next()) 
+				ri = DAO.MEMBER_EXIST;
+			else
+				ri = DAO.MEMBER_NONEXIST;
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs != null) rs.close();
+				if(pstmt != null) pstmt.close();
+				if(conn != null) conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}	
+		return ri;
+	}
+	
+	
+	
+	private Connection getConnection() {
+		
+		Context context = null;
+		DataSource dataSource = null;
+		Connection connection = null;
+		try {
+			context = new InitialContext();
+			dataSource = (DataSource)context.lookup("java:comp/env/jdbc/Oracle11g");
+			connection = dataSource.getConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return connection;
+	}
+}

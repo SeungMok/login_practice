@@ -1,0 +1,20 @@
+package com.java.loginEx;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+public class DAO {
+	
+	public int insertMember(DTO dto) {
+		int i = 0;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String query = "insert into member values (?,?,?,?)";
+		
+		try {
+			conn = getConnection();
+			
+		}
+	}
+}
